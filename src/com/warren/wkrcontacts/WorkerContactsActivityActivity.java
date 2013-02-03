@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -31,9 +32,11 @@ public class WorkerContactsActivityActivity extends Activity {
     private boolean InitComplete;
     private String lastMeeting, lastField;
     private Context context = this;
+    private SharedPreferences mPrefs;
     private final static String CONTACTSINT = "ContactPosition";
     private final static String FIELDINT = "FieldSpPosition";
     private final static String MEETINGINT = "MeetingSpPosition";
+    private final static String PREFS_NAME = "WorkerContactsPrefs";
    //Initialize Objects
     
  
@@ -124,26 +127,18 @@ public class WorkerContactsActivityActivity extends Activity {
 				
 			}
 		});
-	    if(savedInstanceState!=null){
-	    	Log.v(TAG,"Activity RestoreInstanceState Started");
-			// Restore state members from saved instance
-	    	InitComplete=true;
-			Field.setSelection(savedInstanceState.getInt(FIELDINT));
-			Meeting.setSelection(savedInstanceState.getInt(MEETINGINT));
-			Contacts.setSelection(savedInstanceState.getInt(CONTACTSINT));
-			Log.v(TAG,"Activity onRestoreInstanceState Ended");
-
-	    } else { 
-	        //last variables keep the spinner listener from updating when there is no change.  Makes quicker load
-		    lastField="All";
-		    lastMeeting="All";
-	        populateFieldSpinner();
-	        Field.setId(1);
-	        populateMeetings();
-	        Meeting.setId(1);
-	        populateContactList();
-	        InitComplete=true;
-	    }
+	    SharedPreferences mPrefs = getSharedPreferences(PREFS_NAME, 0);
+        //last variables keep the spinner listener from updating when there is no change.  Makes quicker load
+        populateFieldSpinner();
+        Log.v(TAG,"FIELDINT is " + mPrefs.getInt(FIELDINT, 0));
+    	Field.setSelection(mPrefs.getInt(FIELDINT,0));
+        populateMeetings();
+		Meeting.setSelection(mPrefs.getInt(MEETINGINT,0));
+        populateContactList();
+		Contacts.setSelectionFromTop((mPrefs.getInt(CONTACTSINT,0)),0);
+	    lastField=Field.getSelectedItem().toString();
+	    lastMeeting=Meeting.getSelectedItem().toString();
+        InitComplete=true;
         Log.v(TAG, "Activity onCreate Finished");
     }
 //    @Override	
@@ -158,18 +153,31 @@ public class WorkerContactsActivityActivity extends Activity {
 //		Log.v(TAG,"Activity onRestoreInstanceState Ended");
 //	}
     	
-    @Override	
-	public void onSaveInstanceState(Bundle savedInstanceState) {     
-    	Log.v(TAG,"Activity onSaveInstanceState Started");
-		// Always call the superclass so it can restore the view hierarchy     
-		super.onSaveInstanceState(savedInstanceState);     
-		// Restore state members from saved instance     
-		savedInstanceState.putInt(CONTACTSINT, Contacts.getSelectedItemPosition());
-		savedInstanceState.putInt(FIELDINT, Field.getSelectedItemPosition());
-		savedInstanceState.putInt(MEETINGINT, Meeting.getSelectedItemPosition());
-    	Log.v(TAG,"Activity onSaveInstanceState Ended");
+    @Override
+	protected void onPause() {
+		super.onPause();
+    	Log.v(TAG,"Activity onPause Started");
+    	SharedPreferences mPrefs = getSharedPreferences(PREFS_NAME,0);
+        SharedPreferences.Editor ed = mPrefs.edit();
+		ed.putInt(CONTACTSINT, Contacts.getFirstVisiblePosition());
+		ed.putInt(FIELDINT, Field.getSelectedItemPosition());
+		ed.putInt(MEETINGINT, Meeting.getSelectedItemPosition());
+        ed.commit();
+    	Log.v(TAG,"Activity onPause Ended");
 	}
-    
+//
+//	@Override	
+//	public void onSaveInstanceState(Bundle savedInstanceState) {     
+//    	Log.v(TAG,"Activity onSaveInstanceState Started");
+//		// Always call the superclass so it can restore the view hierarchy     
+//		super.onSaveInstanceState(savedInstanceState);     
+//		// Restore state members from saved instance     
+//		savedInstanceState.putInt(CONTACTSINT, Contacts.getSelectedItemPosition());
+//		savedInstanceState.putInt(FIELDINT, Field.getSelectedItemPosition());
+//		savedInstanceState.putInt(MEETINGINT, Meeting.getSelectedItemPosition());
+//    	Log.v(TAG,"Activity onSaveInstanceState Ended");
+//	}
+//    
     
     private void populateMeetings() {
     	Log.v(TAG,"Activity populateMeetings Started");
