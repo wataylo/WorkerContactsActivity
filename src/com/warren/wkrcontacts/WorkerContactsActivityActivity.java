@@ -19,37 +19,41 @@ import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
+import android.widget.Toast;
 
 public class WorkerContactsActivityActivity extends Activity {
     /** Called when the activity is first created. */
+	//Initialize the main variables
     private ListView Contacts;
     private Spinner Field;
     private Spinner Meeting;
+    
+    //Used for Database interface
     private Cursor contactsCursor;
     private Cursor cursorField, cursorMeeting;
     private SpinnerAdapter fieldAdapter;
     private SpinnerAdapter meetingAdapter;
+    
+    //This var keeps the onclicklisteners from updating until initial onCreate complete
     private boolean InitComplete;
+    //On click listener doesn't do anything if it's state hasn't changed
     private String lastMeeting, lastField;
+    
     private Context context = this;
-    private SharedPreferences mPrefs;
+    
+    //Static identifiers for the SharedPrefs File - saving the view when paused
     private final static String CONTACTSINT = "ContactPosition";
     private final static String FIELDINT = "FieldSpPosition";
     private final static String MEETINGINT = "MeetingSpPosition";
     private final static String PREFS_NAME = "WorkerContactsPrefs";
-   //Initialize Objects
     
- 
+    //Use this TAG with every Logcat entry
     public static final String TAG = "WorkerContacts";
-    
-    
-    //public Exp
     
     @Override
     public void onCreate(Bundle savedInstanceState) {
-	    //remove title bar
+	    //remove title bar from the view before it shows
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        
     	Log.v(TAG,"Activity onCreate Started");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
@@ -59,13 +63,15 @@ public class WorkerContactsActivityActivity extends Activity {
 	    Field = (Spinner) findViewById(R.id.spField);
 	    Meeting = (Spinner) findViewById(R.id.spMeeting);
 	    
-	    //InitializeListeners
+	    //Initialize Field Listener
 	    Field.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 
 			@Override
 			public void onItemSelected(AdapterView<?> arg0, View arg1,
 					int arg2, long arg3) {
+				//Don't do anything if this is the initial setup of the activity
 				if (InitComplete){
+					//Make sure the value in the spinner has changed before doing anything
 					if (lastField!=Field.getSelectedItem().toString()){
 						Log.v(TAG, "FieldSelected Begin");
 						//GetMeetingsInField
@@ -79,6 +85,7 @@ public class WorkerContactsActivityActivity extends Activity {
 
 			@Override
 			public void onNothingSelected(AdapterView<?> arg0) {
+				//This should never happen
 				Log.v(TAG, "Nothing Selected Begin");
 			}
 		});
@@ -141,51 +148,39 @@ public class WorkerContactsActivityActivity extends Activity {
         InitComplete=true;
         Log.v(TAG, "Activity onCreate Finished");
     }
-//    @Override	
-//	public void onRestoreInstanceState(Bundle savedInstanceState) {     
-//    	Log.v(TAG,"Activity onRestoreInstanceState Started");
-//		// Always call the superclass so it can restore the view hierarchy     
-//		super.onRestoreInstanceState(savedInstanceState);     
-//		// Restore state members from saved instance     
-//		Field.setSelection(savedInstanceState.getInt(FIELDINT));
-//		Meeting.setSelection(savedInstanceState.getInt(MEETINGINT));
-//		Contacts.setSelection(savedInstanceState.getInt(CONTACTSINT));
-//		Log.v(TAG,"Activity onRestoreInstanceState Ended");
-//	}
     	
     @Override
 	protected void onPause() {
 		super.onPause();
     	Log.v(TAG,"Activity onPause Started");
+    	// Add view state to SharedPreferences PREFS_NAME File
     	SharedPreferences mPrefs = getSharedPreferences(PREFS_NAME,0);
         SharedPreferences.Editor ed = mPrefs.edit();
+        // Record the position of the Contacts Listview, The Field Spinner, and Meeting Spinner
 		ed.putInt(CONTACTSINT, Contacts.getFirstVisiblePosition());
 		ed.putInt(FIELDINT, Field.getSelectedItemPosition());
 		ed.putInt(MEETINGINT, Meeting.getSelectedItemPosition());
         ed.commit();
     	Log.v(TAG,"Activity onPause Ended");
 	}
-//
-//	@Override	
-//	public void onSaveInstanceState(Bundle savedInstanceState) {     
-//    	Log.v(TAG,"Activity onSaveInstanceState Started");
-//		// Always call the superclass so it can restore the view hierarchy     
-//		super.onSaveInstanceState(savedInstanceState);     
-//		// Restore state members from saved instance     
-//		savedInstanceState.putInt(CONTACTSINT, Contacts.getSelectedItemPosition());
-//		savedInstanceState.putInt(FIELDINT, Field.getSelectedItemPosition());
-//		savedInstanceState.putInt(MEETINGINT, Meeting.getSelectedItemPosition());
-//    	Log.v(TAG,"Activity onSaveInstanceState Ended");
-//	}
-//    
     
     private void populateMeetings() {
     	Log.v(TAG,"Activity populateMeetings Started");
-    	//Is this an update?
-//    	if (totalMeetings>0){  TODO
-//    		//UpdateTheCursorAndAdapterView
-//    	}
-		cursorMeeting = getMeetings(fieldAdapter.getItem(Field.getSelectedItemPosition()).toString());
+    	cursorMeeting = getMeetings(fieldAdapter.getItem(Field.getSelectedItemPosition()).toString());
+    	//Deal with 0 Meetings
+		if (cursorMeeting.getCount()==0){
+			String errString = "0 Meetings found for " + Field.getSelectedItem().toString() + " Field"; 
+			Log.e(TAG, errString);
+			Toast errToast = Toast.makeText(context, errString, 2);
+			errToast.show();
+			//Select all by default
+			Field.setSelection(0);
+			return;
+		}
+		else{
+			Log.v(TAG,"A total of " + cursorMeeting.getCount() + " Meetings found");
+		}
+			
 //    	if cursorField.getCount()==0; TODO  Need to add error checking if there are 0 fields
     	cursorMeeting.moveToFirst();
     	ArrayList<String> MeetingArray = new ArrayList<String>();
@@ -332,14 +327,28 @@ public class WorkerContactsActivityActivity extends Activity {
     	Integer i=0;
     	if (c.getCount()>0){
 	     	while(!c.isLast()){
-	     		myArraylist.add(c.getString(1));
-	    		i ++;
-	    		while(c.getString(1).equals(myArraylist.get(i))) {
-	    			if (c.isLast()){
-	    				break;
-	    			}
-	    			c.moveToNext();   			
-	    		};
+	     		//Check to see if the cursor field is blank
+	     		if (c.getString(1)!=null) {
+	     			myArraylist.add(c.getString(1));
+		    		i ++;
+		    		while(c.getString(1).equals(myArraylist.get(i))) {
+		    			if (c.isLast()){
+		    				break;
+		    			}
+		    			c.moveToNext();   			
+		    		};
+	     		}
+	     		else{
+	     			//while cursor field is null move to next until it isn't null
+		    		while(c.getString(1)==null) {
+		    			if (c.isLast()){
+		    				break;
+		    			}
+		    			c.moveToNext();   			
+		    		};	     			
+	     		}
+	     			
+	     		
 	    	};
     	};
     	return myArraylist;
