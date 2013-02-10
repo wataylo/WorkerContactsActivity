@@ -80,7 +80,6 @@ public class WorkerContactsActivityActivity extends Activity {
 	    	setTheme(R.style.Theme_Normal);
 	    }
 	    	
-      
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
         //Initialize Objects
@@ -89,7 +88,6 @@ public class WorkerContactsActivityActivity extends Activity {
 	    Field = (Spinner) findViewById(R.id.spField);
 	    Meeting = (Spinner) findViewById(R.id.spMeeting);
 	    
-	    //TODO Add text size adjustments to SpinnerItem
 	    //Initialize Field Listener
 	    Field.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 
