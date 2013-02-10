@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+	<style name="small_contact_text">
+	   <item name="android:textSize">22sp</item>
+	</style>
+	<style name="small_spinner_text">
+	    <item name="android:textSize">16sp</item>
+	    <item name="android:textColor">#000000</item>
+	    <item name="android:singleLine">true</item>
+   	</style>
+	<style name="small_spinner_dropdown_text">
+	    <item name="android:textSize">16sp</item>
+	    <item name="android:paddingBottom">4sp</item>
+	    <item name="android:paddingTop">4sp</item>	   
+	    <item name="android:textColor">#000000</item>
+   	</style>
+   	
+	<style name="normal_contact_text">
+	   <item name="android:textSize">30sp</item>
+	</style>
+	<style name="normal_spinner_text">
+	    <item name="android:textSize">20sp</item>
+	    <item name="android:textColor">#000000</item>
+	    <item name="android:singleLine">true</item>
+	    	</style>
+	<style name="normal_spinner_dropdown_text">
+	    <item name="android:textSize">20sp</item>
+	    <item name="android:paddingBottom">6sp</item>
+	    <item name="android:paddingTop">6sp</item>	   
+	    <item name="android:textColor">#000000</item>
+   	</style>
+   	
+	<style name="large_contact_text">
+	   <item name="android:textSize">38sp</item>
+	</style>
+	<style name="large_spinner_text">
+	    <item name="android:textSize">25sp</item>
+	    <item name="android:textColor">#000000</item>
+	    <item name="android:singleLine">true</item>
+	</style>
+	<style name="large_spinner_dropdown_text">
+	    <item name="android:textSize">25sp</item>
+	    <item name="android:paddingBottom">8sp</item>
+	    <item name="android:paddingTop">8sp</item>	   
+	    <item name="android:textColor">#000000</item>
+   	</style>
+			
+  <!-- Base application theme is the default theme. -->
+  <style name="Theme" parent="android:Theme">
+  </style>
+
+  <style name="Theme.Small">
+     <item name="textContact">@style/small_contact_text</item>
+     <item name="textSpinner">@style/small_spinner_text</item>
+     <!-- TODO Fix this style -->
+     <item name="textSpinnerDropdown">@style/small_spinner_dropdown_text</item>    
+  </style>
+
+  <style name="Theme.Normal">
+     <item name="textContact">@style/normal_contact_text</item>
+     <item name="textSpinner">@style/normal_spinner_text</item>
+     <item name="textSpinnerDropdown">@style/normal_spinner_dropdown_text</item>    
+  </style>
+
+  <style name="Theme.Large">
+     <item name="textContact">@style/large_contact_text</item>
+     <item name="textSpinner">@style/large_spinner_text</item>
+     <item name="textSpinnerDropdown">@style/large_spinner_dropdown_text</item>    
+  </style>
+  
+</resources>

@@ -11,6 +11,9 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.widget.AdapterView;
@@ -18,7 +21,6 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
-import android.widget.SpinnerAdapter;
 import android.widget.Toast;
 
 public class WorkerContactsActivityActivity extends Activity {
@@ -31,8 +33,8 @@ public class WorkerContactsActivityActivity extends Activity {
     //Used for Database interface
     private Cursor contactsCursor;
     private Cursor cursorField, cursorMeeting;
-    private SpinnerAdapter fieldAdapter;
-    private SpinnerAdapter meetingAdapter;
+    private ArrayAdapter<String> fieldAdapter;
+    private ArrayAdapter<String> meetingAdapter;
     
     //This var keeps the onclicklisteners from updating until initial onCreate complete
     private boolean InitComplete;
@@ -46,15 +48,39 @@ public class WorkerContactsActivityActivity extends Activity {
     private final static String FIELDINT = "FieldSpPosition";
     private final static String MEETINGINT = "MeetingSpPosition";
     private final static String PREFS_NAME = "WorkerContactsPrefs";
+    private final static String THEME = "SpinnerTxtSize";
     
     //Use this TAG with every Logcat entry
     public static final String TAG = "WorkerContacts";
     
     @Override
     public void onCreate(Bundle savedInstanceState) {
-	    //remove title bar from the view before it shows
+    	//remove title bar from the view before it shows
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
     	Log.v(TAG,"Activity onCreate Started");
+    	//get shared preferences to read theme and last view state
+	    SharedPreferences mPrefs = getSharedPreferences(PREFS_NAME, 0);
+	    int ThemeInt = mPrefs.getInt(THEME, -1);
+    	//Set the theme based on our saved preferences 0-small 1-normal 2-large
+	    if (ThemeInt!=-1){
+	    	//there is a saved value
+		    if (ThemeInt==0){
+	    		setTheme(R.style.Theme_Small);		    	
+		    }
+		    if (ThemeInt==1){
+	    		setTheme(R.style.Theme_Normal);		    	
+		    }
+		    if (ThemeInt==2){
+	    		setTheme(R.style.Theme_Large);		    	
+		    }
+		    
+	    }
+	    else {
+	    	//default theme is normal if there is no saved value
+	    	setTheme(R.style.Theme_Normal);
+	    }
+	    	
+      
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
         //Initialize Objects
@@ -63,6 +89,7 @@ public class WorkerContactsActivityActivity extends Activity {
 	    Field = (Spinner) findViewById(R.id.spField);
 	    Meeting = (Spinner) findViewById(R.id.spMeeting);
 	    
+	    //TODO Add text size adjustments to SpinnerItem
 	    //Initialize Field Listener
 	    Field.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 
@@ -134,10 +161,8 @@ public class WorkerContactsActivityActivity extends Activity {
 				
 			}
 		});
-	    SharedPreferences mPrefs = getSharedPreferences(PREFS_NAME, 0);
         //last variables keep the spinner listener from updating when there is no change.  Makes quicker load
         populateFieldSpinner();
-        Log.v(TAG,"FIELDINT is " + mPrefs.getInt(FIELDINT, 0));
     	Field.setSelection(mPrefs.getInt(FIELDINT,0));
         populateMeetings();
 		Meeting.setSelection(mPrefs.getInt(MEETINGINT,0));
@@ -149,7 +174,60 @@ public class WorkerContactsActivityActivity extends Activity {
         Log.v(TAG, "Activity onCreate Finished");
     }
     	
-    @Override
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		Log.v(TAG, "onCreateOptionMenu Started");
+		//Show the options menu when button clicked
+	    MenuInflater inflater = getMenuInflater();
+	    inflater.inflate(R.menu.optionsmenu, menu);
+	    return true;
+	}
+
+	//onclick listener for options menu
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		Log.v(TAG, "onOptionsItemSelected Started");
+		Intent currentActivity; 
+		//open Prefs_Name for Writing variables
+    	SharedPreferences mPrefs = getSharedPreferences(PREFS_NAME,0);
+        SharedPreferences.Editor ed = mPrefs.edit();
+	    // Handle item selection
+	    switch (item.getItemId()) {
+	        case R.id.setGroups:
+	            //TODO Add code here for multiple groups address books should open a bunch of checkboxes for each group
+	        	return true;
+	        case R.id.TextSizeLarge:
+	        	//write 2 to THEME variable to save as Large
+	        	ed.putInt(THEME, 2);
+	        	ed.commit();
+	        	ed=null;
+	        	mPrefs=null;
+	           	currentActivity = getIntent();
+	        	finish();
+	        	startActivity(currentActivity);
+	            return true;
+	        case R.id.TextSizeNormal:
+	        	//write 1 to THEME variable to save as Normal
+	        	ed.putInt(THEME, 1);
+	        	ed.commit();
+	        	currentActivity = getIntent();
+	        	finish();
+	        	startActivity(currentActivity);
+	            return true;
+	        case R.id.TextSizeSmall:
+	        	//write 0 to THEME variable to save as Small
+	        	ed.putInt(THEME, 0);
+	        	ed.commit();
+	        	currentActivity = getIntent();
+	        	finish();
+	        	startActivity(currentActivity);
+	            return true;
+	        default:
+	            return super.onOptionsItemSelected(item);
+	    }
+	}
+
+	@Override
 	protected void onPause() {
 		super.onPause();
     	Log.v(TAG,"Activity onPause Started");
@@ -171,7 +249,7 @@ public class WorkerContactsActivityActivity extends Activity {
 		if (cursorMeeting.getCount()==0){
 			String errString = "0 Meetings found for " + Field.getSelectedItem().toString() + " Field"; 
 			Log.e(TAG, errString);
-			Toast errToast = Toast.makeText(context, errString, 2);
+			Toast errToast = Toast.makeText(context, errString, Toast.LENGTH_SHORT);
 			errToast.show();
 			//Select all by default
 			Field.setSelection(0);
@@ -187,7 +265,8 @@ public class WorkerContactsActivityActivity extends Activity {
     	MeetingArray.add("All");
      	MeetingArray = getUnique(cursorMeeting,MeetingArray);
 
-    	meetingAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_spinner_item,MeetingArray);
+    	meetingAdapter = new ArrayAdapter<String>(this,R.layout.spinneritem,MeetingArray);
+    	meetingAdapter.setDropDownViewResource(R.layout.spinnerdropdownitem);
     	Meeting.setAdapter(meetingAdapter);
 
     	Log.v(TAG,"Activity populateMeetings Ended");
@@ -242,7 +321,9 @@ public class WorkerContactsActivityActivity extends Activity {
     	FieldArray.add("All");
      	FieldArray = getUnique(cursorField, FieldArray);
 
-    	fieldAdapter = new ArrayAdapter<String>(this,android.R.layout.simple_spinner_item,FieldArray);
+    	fieldAdapter = new ArrayAdapter<String>(this,R.layout.spinneritem,FieldArray);
+    	// Specify the layout to use when the list of choices appears
+    	fieldAdapter.setDropDownViewResource(R.layout.spinnerdropdownitem);
     	Field.setAdapter(fieldAdapter);
   	   	
     	Log.v(TAG, "Activity populateFieldSpinner Finished");

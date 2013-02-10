@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<!-- AllView styles -->
+	<attr name="textContact" format="reference" />
+	<attr name="textSpinner" format="reference" />
+	<attr name="textSpinnerDropdown" format="reference" />
+	
+</resources>

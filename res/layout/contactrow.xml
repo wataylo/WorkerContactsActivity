@@ -6,9 +6,9 @@
 
     <TextView
         android:id="@+id/txtContactRow"
+        style="?textContact"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:text="Test1"
-        android:textSize="30sp" />
+        android:text="Test1" />
 
 </LinearLayout>
