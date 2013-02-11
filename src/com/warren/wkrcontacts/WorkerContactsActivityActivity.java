@@ -193,6 +193,8 @@ public class WorkerContactsActivityActivity extends Activity {
 	    switch (item.getItemId()) {
 	        case R.id.setGroups:
 	            //TODO Add code here for multiple groups address books should open a bunch of checkboxes for each group
+	        	Intent i = new Intent(WorkerContactsActivityActivity.this, SelectGroups.class);
+	        	WorkerContactsActivityActivity.this.startActivity(i);
 	        	return true;
 	        case R.id.TextSizeLarge:
 	        	//write 2 to THEME variable to save as Large
