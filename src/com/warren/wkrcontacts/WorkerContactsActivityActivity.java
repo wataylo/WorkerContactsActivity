@@ -407,24 +407,18 @@ public class WorkerContactsActivityActivity extends Activity {
     	ArrayList<String> myArraylist = InitialArray;
     	Integer i=0;
     	if (c.getCount()>0){
-	     	while(!c.isLast()){
+	     	while(!c.isAfterLast()){
 	     		//Check to see if the cursor field is blank
 	     		if (c.getString(1)!=null) {
 	     			myArraylist.add(c.getString(1));
 		    		i ++;
-		    		while(c.getString(1).equals(myArraylist.get(i))) {
-		    			if (c.isLast()){
-		    				break;
-		    			}
+		    		while(!c.isAfterLast() && c.getString(1).equals(myArraylist.get(i))) {
 		    			c.moveToNext();   			
 		    		};
 	     		}
 	     		else{
 	     			//while cursor field is null move to next until it isn't null
-		    		while(c.getString(1)==null) {
-		    			if (c.isLast()){
-		    				break;
-		    			}
+		    		while(!c.isAfterLast() && c.getString(1)==null) {
 		    			c.moveToNext();   			
 		    		};	     			
 	     		}
