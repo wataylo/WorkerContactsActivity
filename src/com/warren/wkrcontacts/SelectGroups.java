@@ -57,39 +57,5 @@ public class SelectGroups extends Activity {
         getMenuInflater().inflate(R.menu.activity_select_groups, menu);
         return true;
     }
-
-    private ArrayList<String> getUnique(Cursor c, ArrayList<String> InitialArray){
-    	//Appends InitialArray with each UniqueValue in col 1 of Cursor
-    	ArrayList<String> myArraylist = InitialArray;
-    	Integer i=0;
-    	if (c.getCount()>0){
-	     	while(!c.isLast()){
-	     		//Check to see if the cursor field is blank
-	     		if (c.getString(1)!=null) {
-	     			myArraylist.add(c.getString(1));
-		    		i ++;
-		    		while(c.getString(1).equals(myArraylist.get(i))) {
-		    			if (c.isLast()){
-		    				break;
-		    			}
-		    			c.moveToNext();   			
-		    		};
-	     		}
-	     		else{
-	     			//while cursor field is null move to next until it isn't null
-		    		while(c.getString(1)==null) {
-		    			if (c.isLast()){
-		    				break;
-		    			}
-		    			c.moveToNext();   			
-		    		};	     			
-	     		}
-	     			
-	     		
-	    	};
-    	};
-    	return myArraylist;
-    }
-
-    
+   
 }
