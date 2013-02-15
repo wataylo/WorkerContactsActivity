@@ -23,9 +23,6 @@ import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-import com.warren.wkrcontacts.R;
-import com.warren.wkrcontacts.SelectGroups;
-
 public class WorkerContactsActivityActivity extends Activity {
     /** Called when the activity is first created. */
 	//Initialize the main variables
@@ -142,8 +139,7 @@ public class WorkerContactsActivityActivity extends Activity {
 	    Contacts.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
 			@Override
-			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
-					long arg3) {
+			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
 				if (InitComplete){
 					Log.v(TAG,"ContactsLV On Click Begin");
 					//Launch People Card for this contact

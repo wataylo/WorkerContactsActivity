@@ -1,14 +1,16 @@
 package com.warren.wkrcontacts;
 
-import java.util.ArrayList;
-
 import android.app.Activity;
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.util.Log;
 import android.view.Menu;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Toast;
@@ -34,7 +36,16 @@ public class SelectGroups extends Activity {
         int[] to = new int[] {R.id.groupNameChk};
         SimpleCursorAdapter adapter = new SimpleCursorAdapter(this, R.layout.groupselectlayout, GroupCur, fieldsT, to);
         Groups.setAdapter(adapter);
-
+        
+        Groups.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        	@Override
+        	public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+        		Log.v(TAG,"GroupClicked");
+        		CheckBox GroupChk = (CheckBox) findViewById(R.id.groupNameChk);
+        		
+       	}
+        });
+        	   
     }
 
     private Cursor getAllGroups() {
