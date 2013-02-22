@@ -2,6 +2,7 @@ package com.warren.wkrcontacts;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -12,15 +13,21 @@ import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
-
 public class SelectGroups extends Activity {
 
+    //Static identifiers for the SharedPrefs File - saving the view when paused
+    private final static String GROUPSINT = "GroupsCount";
+    private final static String GROUPSID = "GroupsID";
+    private final static String PREFS_NAME = "WorkerContactsPrefs";
+    private SharedPreferences mPrefs;
+	
 	LayoutInflater inflater;
 	private final static String TAG = "WorkContactsActivitySelectGroups"; 
 	private CustomGroupAdapter adapter;
@@ -34,6 +41,7 @@ public class SelectGroups extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_select_groups);
         ListView Groups = (ListView) findViewById(R.id.groupsLv);
+        Button Save = (Button) findViewById(R.id.saveBtn);
         GroupCur = getAllGroups();
         String[] fieldsT = new String[] {
                 ContactsContract.Groups.TITLE
@@ -41,6 +49,32 @@ public class SelectGroups extends Activity {
         int[] to = new int[] {R.id.groupNameChk};
         adapter = new CustomGroupAdapter(this, R.layout.groupselectlayout, GroupCur, fieldsT, to);
         Groups.setAdapter(adapter);
+        
+        Save.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				Log.v(TAG, "OnSaveClick Started");
+				//How many items are checked
+				if (getCheckedCount()>0){
+					//there are items checked
+					
+				}
+				else
+				{
+					//toast with message that nothing is checked.  Ask them to check something.  Do nothing.  
+				}
+				
+			}
+
+			private int getCheckedCount() {
+				int count, i;
+				if (GroupCur.getCount()>0){
+					//loop through checked array to see count of checked
+					
+				}
+				return 0;
+			}
+		});
         
     }
 
