@@ -160,11 +160,22 @@ public class WorkerContactsActivityActivity extends Activity {
 		});
         //last variables keep the spinner listener from updating when there is no change.  Makes quicker load
         populateFieldSpinner();
-    	Field.setSelection(mPrefs.getInt(FIELDINT,0));
+        // if stored value > total in spinner then default to 0
+        if (Field.getCount()>mPrefs.getInt(FIELDINT,0))
+        	Field.setSelection(mPrefs.getInt(FIELDINT,0));
+        else
+        	Field.setSelection(0);
         populateMeetings();
-		Meeting.setSelection(mPrefs.getInt(MEETINGINT,0));
+        // if stored value > than total in spinner default to 0
+        if (Meeting.getCount()>mPrefs.getInt(MEETINGINT, 0))
+        	Meeting.setSelection(mPrefs.getInt(MEETINGINT,0));
+        else
+        	Meeting.setSelection(0);
         populateContactList();
-		Contacts.setSelectionFromTop((mPrefs.getInt(CONTACTSINT,0)),0);
+        if (Contacts.getCount()>mPrefs.getInt(CONTACTSINT, 0))
+        	Contacts.setSelectionFromTop((mPrefs.getInt(CONTACTSINT,0)),0);
+        else
+        	Contacts.setSelectionFromTop(0,0);
 	    lastField=Field.getSelectedItem().toString();
 	    lastMeeting=Meeting.getSelectedItem().toString();
         InitComplete=true;
