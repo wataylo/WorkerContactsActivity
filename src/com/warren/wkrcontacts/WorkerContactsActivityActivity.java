@@ -161,6 +161,7 @@ public class WorkerContactsActivityActivity extends Activity {
         //last variables keep the spinner listener from updating when there is no change.  Makes quicker load
         populateFieldSpinner();
         // if stored value > total in spinner then default to 0
+        //test crash
         if (Field.getCount()>mPrefs.getInt(FIELDINT,0))
         	Field.setSelection(mPrefs.getInt(FIELDINT,0));
         else
