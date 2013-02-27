@@ -27,10 +27,9 @@ public class SelectGroups extends Activity {
     private final static String GROUPSCOUNT = "GroupsCount";
     private final static String GROUPSID = "GroupsID";
     private final static String PREFS_NAME = "WorkerContactsPrefs";
-    private SharedPreferences mPrefs;
 	
 	LayoutInflater inflater;
-	private final static String TAG = "WorkContactsActivitySelectGroups"; 
+	private final static String TAG = "SelectGroups"; 
 	private CustomGroupAdapter adapter;
 	private Cursor GroupCur;
 	private Context context;
@@ -66,7 +65,7 @@ public class SelectGroups extends Activity {
 					//there are items checked.  Write the count variable
 					ed.putInt(GROUPSCOUNT, numChecked);
 					while(i<adapter.getCount()){
-						//Loop through all checkboxes to save the state
+						//Loop through all CheckBoxes to save the state
 						if (adapter.checkState[i]){
 							//save this group_ID as a KeyValue Pair
 							j++;
@@ -125,11 +124,11 @@ public class SelectGroups extends Activity {
         return managedQuery(uri, projection, selection, selectionArgs, sortOrder);
 	}
 
-	@Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.activity_select_groups, menu);
-        return true;
-    }
+//	@Override
+//    public boolean onCreateOptionsMenu(Menu menu) {
+//        getMenuInflater().inflate(R.menu.activity_select_groups, menu);
+//        return true;
+//    }
 
 	
 	private class CustomGroupAdapter extends SimpleCursorAdapter{
@@ -190,7 +189,7 @@ public class SelectGroups extends Activity {
 		    //cache the views
 		    viewholder.checkBox=(CheckBox) convertView.findViewById(R.id.groupNameChk);
 		    
-		     //link the cached views to the convertview
+		     //link the cached views to the convertView
 		    convertView.setTag(viewholder);
 		    
 		    //set initial CheckState
