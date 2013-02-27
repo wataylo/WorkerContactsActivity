@@ -211,8 +211,6 @@ public class WorkerContactsActivityActivity extends Activity {
 	        	//write 2 to THEME variable to save as Large
 	        	ed.putInt(THEME, 2);
 	        	ed.commit();
-	        	ed=null;
-	        	mPrefs=null;
 	           	currentActivity = getIntent();
 	        	finish();
 	        	startActivity(currentActivity);
